@@ -1,20 +1,23 @@
 package helpers
 
 import java.io.File
-import core.ProjectCloner
+
+import scala.Array.canBuildFrom
+
+import algorithms.Algorithm
+import algorithms.OptimizationMethod
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.mpp.MPPReader
 import net.sf.mpxj.mspdi.MSPDIWriter
-import algorithms.Algorithm
-import algorithms.OptimizationMethod
 
 object IO {
     private lazy val reader = new MPPReader
     private lazy val writer = new MSPDIWriter
+    private lazy val allFiles = new File("mpp") listFiles
 
-    lazy val allFiles = new File("mpp") listFiles
+    def firstProject = readProject(allFiles(0) getPath)
 
-    def readFirstProject = readProject(allFiles(0) getPath)
+    def allProjects = allFiles map (projectPath => readProject(projectPath getPath))
 
     def readProject(sourcePath: String) = {
         println("Reading from " + sourcePath)

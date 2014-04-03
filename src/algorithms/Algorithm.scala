@@ -23,10 +23,8 @@ abstract class Algorithm {
         def by(optimizationMethod: OptimizationMethod): ProjectFile = {
             val cleanProject = Algorithm fix (ProjectCloner createBaseProject (project, false))
             Algorithm fix (optimizationMethod match {
-                case `time` =>
-                    perform(cleanProject, true)
-                case `cost` =>
-                    perform(cleanProject)
+                case `time` => perform(cleanProject, true)
+                case `cost` => perform(cleanProject)
             })
         }
     }

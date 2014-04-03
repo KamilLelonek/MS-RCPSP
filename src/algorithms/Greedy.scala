@@ -7,54 +7,53 @@ import core.SkillsUtilities
 import core.eval.Eval
 import helpers.Printer
 import net.sf.mpxj.ProjectFile
+import net.sf.mpxj.Resource
 import net.sf.mpxj.Task
 
 class Greedy extends Algorithm {
 
     override protected def perform(cleanProject: ProjectFile, byTime: Boolean = false) = {
-        var bestProject = cleanProject
-        bestProject.getAllTasks foreach (task => {
-            Printer projectCostAndDuration (bestProject)
-            bestProject = assignBestResourceForTask(task) inProject (bestProject, byTime)
+        var globalBestProject = cleanProject
+
+        globalBestProject.getAllTasks foreach (task => {
+            Printer projectCostAndDuration (globalBestProject)
+            globalBestProject = assignBestResourceForTask(task) inProject (globalBestProject, byTime)
         })
-        bestProject
+
+        globalBestProject
     }
 
     private def assignBestResourceForTask(task: Task) = new {
-        def inProject(bestProject: ProjectFile, byTime: Boolean) = {
-            var localBestProject: ProjectFile = null
+        def inProject(globalBestProject: ProjectFile, byTime: Boolean) = {
+            var localBestProject: ProjectFile = operateOnCopy(globalBestProject, task)
 
-            var localTempProject = ProjectCloner createBaseProject (bestProject, true)
-            var localTempTask = localTempProject getTaskByID (task getUniqueID)
-            val resourcesCapablePerformingTask = SkillsUtilities resourcesCapablePerformingTask (localTempTask)
-
+            val resourcesCapablePerformingTask = SkillsUtilities resourcesCapablePerformingTask (task)
             resourcesCapablePerformingTask foreach (resource => {
-                var localTempResource = localTempProject getResourceByID (resource getUniqueID)
-                assignResource(localTempResource) toTask (localTempTask)
-                localBestProject = chooseBestProject(localBestProject, localTempProject, byTime)
-                localTempProject = ProjectCloner createBaseProject (bestProject, true)
-                localTempTask = localTempProject getTaskByID (task getUniqueID)
+                val localTempProject = operateOnCopy(globalBestProject, task, resource)
+                localBestProject = chooseBetterProject(localBestProject, localTempProject, byTime)
             })
 
             localBestProject
         }
     }
 
-    private def chooseBestProject(localBestProject: ProjectFile, localTempProject: ProjectFile, byTime: Boolean): ProjectFile = {
-        if (localBestProject == null) return localTempProject
-        if (byTime) {
-            Algorithm fix (localTempProject)
-            chooseBetterProject(localTempProject, localBestProject) byEval (Eval.getProjectCost)
-        }
-        else {
-            chooseBetterProject(localTempProject, localBestProject) byEval (Eval.getProjectDuration)
-        }
+    private def operateOnCopy(globalBestProject: ProjectFile, task: Task, resource: Resource = null) = {
+        val localTempProject = ProjectCloner createBaseProject (globalBestProject, true)
+        val localTempTask = localTempProject getTaskByID (task getID)
+        val localTempResource =
+            if (resource != null)
+                localTempProject getResourceByID (resource getID)
+            else
+                SkillsUtilities resourcesCapablePerformingTask (localTempTask) get (0)
+        assignResource (localTempResource) toTask (localTempTask)
+        Algorithm fix (localTempProject)
     }
 
-    private def chooseBetterProject(firstProject: ProjectFile, lastProject: ProjectFile) = new {
-        def byEval(eval: ProjectFile => Double) = {
-            if (eval(firstProject) > eval(lastProject)) lastProject else firstProject
-        }
+    private def chooseBetterProject(localBestProject: ProjectFile, localTempProject: ProjectFile, byTime: Boolean): ProjectFile =
+        calculateBetterProject(localTempProject, localBestProject) byEval (if (byTime) Eval getProjectDuration else Eval getProjectCost)
+
+    private def calculateBetterProject(firstProject: ProjectFile, lastProject: ProjectFile) = new {
+        def byEval(eval: ProjectFile => Double) = List(firstProject, lastProject) minBy (eval(_))
     }
 
 }
