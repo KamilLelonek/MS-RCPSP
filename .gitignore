@@ -1,3 +1,9 @@
-*.class
 .cache
+.classpath
+.project
+
+bin/
+*.class
+
+results/
 *.xml
