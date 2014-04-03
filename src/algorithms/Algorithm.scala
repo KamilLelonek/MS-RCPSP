@@ -34,9 +34,9 @@ abstract class Algorithm {
     protected def assignResource(resource: Resource) = new {
         def toTask(task: Task) = {
             val resourceAssignment = task addResourceAssignment (resource)
-            resourceAssignment setStart (task.getStart)
-            resourceAssignment setWork (task.getDuration)
-            resourceAssignment setRemainingWork (resourceAssignment.getWork)
+            resourceAssignment setStart (task getStart)
+            resourceAssignment setWork (task getDuration)
+            resourceAssignment setRemainingWork (resourceAssignment getWork)
             resourceAssignment setCost (resourceAssignment.getWork.getDuration * resource.getStandardRate.getAmount)
         }
     }
