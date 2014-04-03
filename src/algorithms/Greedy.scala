@@ -12,7 +12,8 @@ import net.sf.mpxj.Task
 
 class Greedy extends Algorithm {
 
-    override protected def perform(cleanProject: ProjectFile, byTime: Boolean = false) = {
+    override protected def perform(project: ProjectFile, byTime: Boolean = false) = {
+        val cleanProject = Algorithm fix (ProjectCloner createBaseProject (project, false))
         cleanProject.getAllTasks.foldLeft(cleanProject)((globalBestProject, task) => {
             Printer projectCostAndDuration (globalBestProject)
             assignBestResourceForTask(task) inProject (globalBestProject, byTime)

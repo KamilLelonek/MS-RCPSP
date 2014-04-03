@@ -7,11 +7,20 @@ import algorithms.BranchAndBound
 import net.sf.mpxj.ProjectFile
 import algorithms.OptimizationMethod
 import algorithms.Algorithm
+import algorithms.BranchAndBound
 
 object Main extends App {
     lazy val methods = Array(time, cost)
     lazy val algorithms = Array(new Greedy, new BranchAndBound)
     lazy val projects = IO allProjects
+
+    /**********************************/
+    val bab = new BranchAndBound
+    val project = IO firstProject
+    val method = cost
+
+    bab.optimize(project) by method
+    /**********************************/
 
     def performAllAlgorithmsForAllFiles = {
         projects.foreach(project => {
