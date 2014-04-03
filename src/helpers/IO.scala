@@ -25,7 +25,7 @@ object IO {
         def fromAlgorithm(algorithm: Algorithm) = new {
             def andMethod(method: OptimizationMethod) = new {
                 val destinationPath = pathName(algorithm, method)
-                println("Writing to " + destinationPath)
+                println("\nWriting to " + destinationPath)
                 writer write (project, destinationPath)
             }
         }

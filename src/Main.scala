@@ -5,7 +5,7 @@ import helpers.IO
 import helpers.Printer
 
 object Main extends App {
-    val methods = Array(time, cost)
+    val methods = Array(time) //, cost)
     val algorithms = Array(new Greedy) //, new BranchAndBound)
     val project = IO readFirstProject
 
