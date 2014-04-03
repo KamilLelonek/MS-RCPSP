@@ -14,7 +14,7 @@ object Printer {
     def projectCostAndDuration(project: ProjectFile) =
         println(s"Project cost: ${Eval.getProjectCost(project)} and duration: ${Eval.getProjectDuration(project)}")
 
-    def algorithmHeader[T <: Algorithm](algorithm: T) = new {
+    def algorithmHeader(algorithm: Algorithm) = new {
         println(s"\n### ${IO simpleClassName (algorithm)} algorithm ###")
         def andMethodHeader(optimizationMethod: OptimizationMethod) =
             println(s"-------- ${IO simpleClassName (optimizationMethod)} optimization --------")

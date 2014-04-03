@@ -34,7 +34,7 @@ object IO {
         }
     }
 
-    def simpleClassName(instance: AnyRef) = instance.getClass.getSimpleName.toLowerCase.stripSuffix("$")
     def pathName(algorithm: Algorithm, method: OptimizationMethod) =
         s"results/${simpleClassName(algorithm)}_${simpleClassName(method)}.xml"
+    def simpleClassName(instance: AnyRef) = instance.getClass.getSimpleName.toLowerCase.stripSuffix("$")
 }
