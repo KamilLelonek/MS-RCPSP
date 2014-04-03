@@ -22,14 +22,16 @@ object IO {
     }
 
     def writeProject(project: ProjectFile) = new {
-        def fromAlgorithm[T <: Algorithm](algorithm: T) = new {
+        def fromAlgorithm(algorithm: Algorithm) = new {
             def andMethod(method: OptimizationMethod) = new {
-                val destinationPath = s"${simpleClassName(algorithm)}${simpleClassName(method)}.xml"
+                val destinationPath = pathName(algorithm, method)
                 println("Writing to " + destinationPath)
                 writer write (project, destinationPath)
             }
         }
     }
 
-    private def simpleClassName(obj: AnyRef) = obj.getClass.getSimpleName.capitalize
+    def simpleClassName(obj: AnyRef) = obj.getClass.getSimpleName.toLowerCase.stripSuffix("$")
+    def pathName(algorithm: Algorithm, method: OptimizationMethod) =
+        s"results/${simpleClassName(algorithm)}_${simpleClassName(method)}.xml"
 }

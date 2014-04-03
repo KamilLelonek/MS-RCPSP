@@ -1,13 +1,14 @@
 package helpers
 
 import scala.collection.JavaConversions.asScalaBuffer
-import core.eval.Eval
-import net.sf.mpxj.ProjectFile
-import net.sf.mpxj.Task
+
+import algorithms.Algorithm
 import algorithms.OptimizationMethod
 import algorithms.cost
 import algorithms.time
-import algorithms.Algorithm
+import core.eval.Eval
+import net.sf.mpxj.ProjectFile
+import net.sf.mpxj.Task
 
 object Printer {
     def listHierarchy(task: Task, indent: String = ""): Unit = {
@@ -17,17 +18,12 @@ object Printer {
         })
     }
 
-    def projectCost(project: ProjectFile) =
-        println("Project cost: " + Eval.getProjectCost(project))
+    def projectCostAndDuration(project: ProjectFile) =
+        println(s"Project cost: ${Eval.getProjectCost(project)} and duration: ${Eval.getProjectDuration(project)}")
 
-    def projectDuration(project: ProjectFile) =
-        println("Project duration: " + Eval.getProjectDuration(project))
-
-    def methodHeader(optimizationMethod: OptimizationMethod) = optimizationMethod match {
-        case `time` => println("-------- Time optimization --------\n")
-        case `cost` => println("\n-------- Cost optimization --------")
+    def algorithmHeader[T <: Algorithm](algorithm: T) = new {
+        println(s"\n### ${IO simpleClassName (algorithm)} algorithm ###")
+        def andMethodHeader(optimizationMethod: OptimizationMethod) =
+            println(s"-------- ${IO simpleClassName (optimizationMethod)} optimization --------")
     }
-
-    def algorithmHeader[T <: Algorithm](algorithm: T) =
-        println(s"Algorithm ${algorithm.getClass.getName} optimalization")
 }
