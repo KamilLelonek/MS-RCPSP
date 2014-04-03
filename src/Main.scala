@@ -11,7 +11,7 @@ object Main extends App {
 
     for (algorithm <- algorithms; method <- methods) {
         Printer algorithmHeader (algorithm) andMethodHeader (method)
-        var result = algorithm.optimize(project) by (time)
+        var result = algorithm.optimize(project) by (method)
         Printer projectCostAndDuration (result)
         IO writeProject (result) fromAlgorithm (algorithm) andMethod (method)
     }
