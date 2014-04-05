@@ -1,13 +1,12 @@
+import algorithms.Algorithm
+import algorithms.BranchAndBound
 import algorithms.Greedy
+import algorithms.OptimizationMethod
 import algorithms.cost
 import algorithms.time
 import helpers.IO
 import helpers.Printer
-import algorithms.BranchAndBound
 import net.sf.mpxj.ProjectFile
-import algorithms.OptimizationMethod
-import algorithms.Algorithm
-import algorithms.BranchAndBound
 
 object Main extends App {
     lazy val methods = Array(time, cost)

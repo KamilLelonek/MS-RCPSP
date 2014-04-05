@@ -1,11 +1,10 @@
 package algorithms
 
-import core.ProjectCloner
 import core.conflicts.ConflictFixer
+import core.eval.Eval
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.Resource
 import net.sf.mpxj.Task
-import core.eval.Eval
 
 sealed abstract class OptimizationMethod
 case object time extends OptimizationMethod

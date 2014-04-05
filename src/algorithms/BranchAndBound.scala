@@ -1,14 +1,14 @@
 package algorithms
 
-import scala.collection.JavaConversions._
-import core.ProjectCloner
-import net.sf.mpxj.ProjectFile
 import java.util.Date
-import scala.collection.mutable.Buffer
-import net.sf.mpxj.Task
-import helpers.Printer
-import BranchAndBound._
+
+import scala.collection.JavaConversions.asScalaBuffer
+
+import core.ProjectCloner
 import core.SkillsUtilities
+import helpers.Printer
+import net.sf.mpxj.ProjectFile
+import net.sf.mpxj.Task
 
 object BranchAndBound {
     type Groups = List[(Date, List[Integer])]
@@ -35,13 +35,13 @@ class BranchAndBound extends Algorithm {
         tasks.groupBy(_ getStart).toList.sortBy(_ _1) map ((tuple) => (tuple _1, tuple._2.toList map ((task) => task getID)))
 
     private def buildTreeWithProject(project: ProjectFile) = new {
-        def forGroups(groups: Groups) = new {
+        def forGroups(groups: BranchAndBound.Groups) = new {
             def byTime(byTime: Boolean): ProjectFile =
                 buildPartialScheduler(project, 0, groups, byTime)
         }
     }
 
-    private def buildPartialScheduler(currentSolution: ProjectFile, currentDepth: Int, groups: Groups, byTime: Boolean): ProjectFile = {
+    private def buildPartialScheduler(currentSolution: ProjectFile, currentDepth: Int, groups: BranchAndBound.Groups, byTime: Boolean): ProjectFile = {
         Printer projectCostAndDuration (currentSolution)
         val tasksIdsToPermute = groups(currentDepth)._2 toList
         val tasksWithResources = getAllTasksResources(tasksIdsToPermute) inProject (currentSolution)

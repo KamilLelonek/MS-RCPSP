@@ -1,17 +1,12 @@
 package helpers
 
-import scala.collection.JavaConversions.asScalaBuffer
+import java.text.SimpleDateFormat
+
 import algorithms.Algorithm
+import algorithms.BranchAndBound
 import algorithms.OptimizationMethod
-import algorithms.cost
-import algorithms.time
 import core.eval.Eval
 import net.sf.mpxj.ProjectFile
-import net.sf.mpxj.Task
-import java.util.Date
-import scala.collection.mutable.Buffer
-import java.text.SimpleDateFormat
-import algorithms.BranchAndBound
 
 object Printer {
     private lazy val dateFormat = new SimpleDateFormat("dd MMMM y',' HH:mm:ss")
