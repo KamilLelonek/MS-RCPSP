@@ -29,7 +29,7 @@ object Printer {
         println(s"\nGroups count: ${groups.size}")
         groups.zipWithIndex foreach {
             case (group, index) =>
-                println(s"${index}: ${dateFormat.format(group._1)} with tasks: ${group._2}")
+                println(s"Node ${index}: ${dateFormat.format(group._1)} with tasks: ${group._2}")
         }
     }
 }
