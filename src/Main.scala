@@ -14,7 +14,11 @@ object Main extends App {
     lazy val projects = IO allProjects
     lazy val firstProject = IO firstProject
 
-    performAllAlgorithmsForFile(firstProject)
+    performAllAlgorithmsForAllFiles
+    /*
+     * One single file can be run like:
+     * 	performAllAlgorithmsForFile(IO firstProject)
+     */
 
     def performAllAlgorithmsForAllFiles = {
         projects.foreach(project => {

@@ -17,7 +17,7 @@ object BranchAndBound {
 class BranchAndBound extends Algorithm {
 
     override protected def perform(project: ProjectFile, byTime: Boolean = false) = {
-        val cleanProject = if (byTime) cloneProjectWithoutAssignments (project) else clonePlainProject(project)
+        val cleanProject = cloneProjectWithoutAssignments (project)
         val groupedTasksIDs = groupAndSortTasksByStartDate(cleanProject getAllTasks)
         buildTreeWithProject(cleanProject) forGroups (groupedTasksIDs) byTime (byTime)
     }
@@ -27,9 +27,6 @@ class BranchAndBound extends Algorithm {
         clonedProject.getAllResourceAssignments.clear
         Algorithm fix (clonedProject)
     }
-
-    private def clonePlainProject(project: ProjectFile) =
-        Algorithm fix (ProjectCloner createBaseProject (project, false))
 
     private def groupAndSortTasksByStartDate(tasks: java.util.List[Task]) =
         tasks.groupBy(_ getStart).toList.sortBy(_ _1) map ((tuple) => (tuple _1, tuple._2.toList map ((task) => task getID)))
@@ -51,16 +48,12 @@ class BranchAndBound extends Algorithm {
     }
 
     def getAllTasksResources(tasksIDs: List[Integer]) = new {
-        def inProject(project: ProjectFile) = {
-            val tasksToPermute = tasksIDs map (project getTaskByID)
-            tasksToPermute map (getTaskWithResources)
-        }
+        def inProject(project: ProjectFile) =
+            tasksIDs map (project getTaskByID) map (getTaskWithResources)
     }
 
-    private def getTaskWithResources(task: Task) = {
-        val resourcesIds = SkillsUtilities.resourcesCapablePerformingTask(task).map(_ getID).toList
-        (task getID, resourcesIds)
-    }
+    private def getTaskWithResources(task: Task) =
+        (task getID, SkillsUtilities.resourcesCapablePerformingTask(task).map(_ getID).toList)
 
     private def chooseBestSolution(currentSolution: ProjectFile, possibleSolutions: List[List[(Integer, Integer)]], byTime: Boolean) = {
         var localBestProject: ProjectFile = null
