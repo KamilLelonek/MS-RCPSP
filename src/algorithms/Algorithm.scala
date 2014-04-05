@@ -46,7 +46,7 @@ abstract class Algorithm {
         else
             calculateBetterProject(localBestProject, localTempProject) byEval (if (byTime) Eval getProjectDuration else Eval getProjectCost)
 
-    protected def calculateBetterProject(firstProject: ProjectFile, lastProject: ProjectFile) = new {
+    private def calculateBetterProject(firstProject: ProjectFile, lastProject: ProjectFile) = new {
         def byEval(eval: ProjectFile => Double) = List(firstProject, lastProject) minBy (eval(_))
     }
 }

@@ -13,14 +13,9 @@ object Main extends App {
     lazy val methods = Array(time, cost)
     lazy val algorithms = Array(new Greedy, new BranchAndBound)
     lazy val projects = IO allProjects
+    lazy val firstProject = IO firstProject
 
-    /**********************************/
-    val bab = new BranchAndBound
-    val project = IO firstProject
-    val method = cost
-
-    bab.optimize(project) by method
-    /**********************************/
+    performAllAlgorithmsForFile(firstProject)
 
     def performAllAlgorithmsForAllFiles = {
         projects.foreach(project => {
