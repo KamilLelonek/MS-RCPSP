@@ -4,7 +4,6 @@ import scala.collection.JavaConversions.asScalaBuffer
 
 import core.ProjectCloner
 import core.SkillsUtilities
-import core.eval.Eval
 import helpers.Printer
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.Resource
@@ -37,14 +36,4 @@ class Greedy extends Algorithm {
         assignResource (localTempResource) toTask (localTempTask)
         Algorithm fix (localTempProject)
     }
-
-    private def chooseBetterProject(localBestProject: ProjectFile, localTempProject: ProjectFile, byTime: Boolean): ProjectFile =
-        if (localBestProject == null) localTempProject
-        else
-            calculateBetterProject(localBestProject, localTempProject) byEval (if (byTime) Eval getProjectDuration else Eval getProjectCost)
-
-    private def calculateBetterProject(firstProject: ProjectFile, lastProject: ProjectFile) = new {
-        def byEval(eval: ProjectFile => Double) = List(firstProject, lastProject) minBy (eval(_))
-    }
-
 }

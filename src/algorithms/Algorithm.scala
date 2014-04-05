@@ -5,6 +5,7 @@ import core.conflicts.ConflictFixer
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.Resource
 import net.sf.mpxj.Task
+import core.eval.Eval
 
 sealed abstract class OptimizationMethod
 case object time extends OptimizationMethod
@@ -38,5 +39,14 @@ abstract class Algorithm {
             resourceAssignment setRemainingWork (resourceAssignment getWork)
             resourceAssignment setCost (resourceAssignment.getWork.getDuration * resource.getStandardRate.getAmount)
         }
+    }
+
+    protected def chooseBetterProject(localBestProject: ProjectFile, localTempProject: ProjectFile, byTime: Boolean): ProjectFile =
+        if (localBestProject == null) localTempProject
+        else
+            calculateBetterProject(localBestProject, localTempProject) byEval (if (byTime) Eval getProjectDuration else Eval getProjectCost)
+
+    protected def calculateBetterProject(firstProject: ProjectFile, lastProject: ProjectFile) = new {
+        def byEval(eval: ProjectFile => Double) = List(firstProject, lastProject) minBy (eval(_))
     }
 }
