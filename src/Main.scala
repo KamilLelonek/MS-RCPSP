@@ -38,7 +38,7 @@ object Main extends App {
         def forProject(project: ProjectFile) = new {
             def withMethod(method: OptimizationMethod) = {
                 Printer algorithmHeader (algorithm) andMethodHeader (method)
-                var result = algorithm.optimize(project) by (method)
+                val result = algorithm.optimize(project) by (method)
                 Printer projectCostAndDuration (result)
                 IO writeProject (result) fromAlgorithm (algorithm) andMethod (method)
             }
