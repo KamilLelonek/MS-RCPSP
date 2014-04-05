@@ -17,7 +17,7 @@ object BranchAndBound {
 class BranchAndBound extends Algorithm {
 
     override protected def perform(project: ProjectFile, byTime: Boolean = false) = {
-        val cleanProject = cloneProjectWithoutAssignments (project)
+        val cleanProject = if (byTime) cloneProjectWithoutAssignments (project) else clonePlainProject(project)
         val groupedTasksIDs = groupAndSortTasksByStartDate(cleanProject getAllTasks)
         buildTreeWithProject(cleanProject) forGroups (groupedTasksIDs) byTime (byTime)
     }
@@ -27,6 +27,9 @@ class BranchAndBound extends Algorithm {
         clonedProject.getAllResourceAssignments.clear
         Algorithm fix (clonedProject)
     }
+
+    private def clonePlainProject(project: ProjectFile) =
+        Algorithm fix (ProjectCloner createBaseProject (project, false))
 
     private def groupAndSortTasksByStartDate(tasks: java.util.List[Task]) =
         tasks.groupBy(_ getStart).toList.sortBy(_ _1) map ((tuple) => (tuple _1, tuple._2.toList map ((task) => task getID)))
@@ -62,12 +65,12 @@ class BranchAndBound extends Algorithm {
     private def chooseBestSolution(currentSolution: ProjectFile, possibleSolutions: List[List[(Integer, Integer)]], byTime: Boolean) = {
         var localBestProject: ProjectFile = null
         possibleSolutions foreach ((solution) => {
-            var localTempProject = ProjectCloner createBaseProject (currentSolution, true)
+            val localTempProject = ProjectCloner createBaseProject (currentSolution, true)
             solution foreach ((taskWithResource) => {
                 val localTempTask = localTempProject getTaskByID (taskWithResource _1)
                 val localTempResource = localTempProject getResourceByID (taskWithResource _2)
                 assignResource (localTempResource) toTask (localTempTask)
-                Algorithm fix (localTempProject)
+                if (byTime) Algorithm fix (localTempProject)
                 localBestProject = chooseBetterProject(localBestProject, localTempProject, byTime)
             })
         })
