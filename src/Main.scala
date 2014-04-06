@@ -22,13 +22,14 @@ object Main extends App {
 
     def performAllAlgorithmsForAllFiles = {
         projects.foreach(project => {
-            performAllAlgorithmsForFile (project)
+            Printer projectName (project)
+            performAllAlgorithmsForFile (project._2)
         })
     }
 
     def performAllAlgorithmsForFile(project: ProjectFile) = {
         for (algorithm <- algorithms; method <- methods) {
-            performAlgorithm(algorithm) forProject (project) withMethod (method)
+            Printer time (performAlgorithm(algorithm) forProject (project) withMethod (method))
         }
     }
 

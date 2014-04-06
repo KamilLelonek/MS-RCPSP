@@ -17,12 +17,10 @@ object IO {
 
     def firstProject = readProject(allFiles(0) getPath)
 
-    def allProjects = allFiles map (projectPath => readProject(projectPath getPath))
+    def allProjects = allFiles map (projectPath => (projectPath, readProject(projectPath getPath)))
 
-    def readProject(sourcePath: String) = {
-        println("Reading from " + sourcePath)
+    def readProject(sourcePath: String) =
         reader read (sourcePath)
-    }
 
     def writeProject(project: ProjectFile) = new {
         def fromAlgorithm(algorithm: Algorithm) = new {
