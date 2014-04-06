@@ -42,10 +42,16 @@ class BranchAndBound extends Algorithm {
         Printer projectCostAndDuration (currentSolution)
         val tasksIdsToPermute = groups(currentDepth)._2 toList
         val tasksWithResources = getAllTasksResources(tasksIdsToPermute) inProject (currentSolution)
-        val permutedTasks = Permutator permutateTasks (tasksWithResources)
+        val permutedTasks = permutateTasks (tasksWithResources)
         val newSolution = chooseBestSolution(currentSolution, permutedTasks, byTime)
         if (currentDepth < groups.size - 1) buildPartialScheduler(newSolution, currentDepth + 1, groups, byTime) else newSolution
     }
+
+    def permutateTasks(tasksWithResources: List[(Integer, List[Integer])], currentSolution: List[(Integer, Integer)] = Nil): List[List[(Integer, Integer)]] =
+        tasksWithResources match {
+            case head :: Nil  => head._2.map (x => ((head._1, x) :: currentSolution).reverse)
+            case head :: tail => head._2.flatMap(x => permutateTasks(tail, (head._1, x) :: currentSolution))
+        }
 
     def getAllTasksResources(tasksIDs: List[Integer]) = new {
         def inProject(project: ProjectFile) =
