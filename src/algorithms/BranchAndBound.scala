@@ -6,6 +6,8 @@ import scala.collection.JavaConversions.asScalaBuffer
 
 import core.ProjectCloner
 import core.SkillsUtilities
+import core.conflicts.ConflictFixer
+import core.criticalpath.CriticalPathFixer
 import helpers.Printer
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.Task
@@ -23,9 +25,11 @@ class BranchAndBound extends Algorithm {
     }
 
     private def cloneProjectWithoutAssignments(project: ProjectFile) = {
-        val clonedProject = ProjectCloner createBaseProject (project, true)
+        val clonedProject = ProjectCloner createBaseProject (project, false)
         clonedProject.getAllResourceAssignments.clear
-        Algorithm fix (clonedProject)
+        ConflictFixer pack (clonedProject)
+        CriticalPathFixer rescheduleProject (clonedProject)
+        clonedProject
     }
 
     private def groupAndSortTasksByStartDate(tasks: java.util.List[Task]) =

@@ -1,12 +1,13 @@
 package helpers
 
+import java.io.File
 import java.text.SimpleDateFormat
+
 import algorithms.Algorithm
 import algorithms.BranchAndBound
 import algorithms.OptimizationMethod
 import core.eval.Eval
 import net.sf.mpxj.ProjectFile
-import java.io.File
 
 object Printer {
     private lazy val dateFormat = new SimpleDateFormat("dd MMMM y',' HH:mm:ss")
