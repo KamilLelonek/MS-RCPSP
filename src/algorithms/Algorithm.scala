@@ -5,17 +5,30 @@ import core.eval.Eval
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.Resource
 import net.sf.mpxj.Task
+import core.ProjectCloner
+import core.criticalpath.CriticalPathFixer
 
 sealed abstract class OptimizationMethod
 case object time extends OptimizationMethod
 case object cost extends OptimizationMethod
 
 object Algorithm {
-    def fix(project: ProjectFile) = {
+    def packTasksAndFixResourcesConflicts(project: ProjectFile) = {
         ConflictFixer pack (project)
         ConflictFixer fixConflicts (project)
         project
     }
+
+    def rescheduleTasksByStartDate(project: ProjectFile) = {
+        val clonedProject = cloneProject(project)
+        clonedProject.getAllResourceAssignments.clear
+        ConflictFixer pack (clonedProject)
+        CriticalPathFixer rescheduleProject (clonedProject)
+        clonedProject
+    }
+
+    def cloneProject(project: ProjectFile, withAssignments: Boolean = false) =
+        ProjectCloner createBaseProject (project, withAssignments)
 }
 
 abstract class Algorithm {

@@ -2,17 +2,18 @@ package algorithms
 
 import scala.collection.JavaConversions.asScalaBuffer
 
-import core.ProjectCloner
 import core.SkillsUtilities
 import helpers.Printer
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.Resource
 import net.sf.mpxj.Task
 
+import Algorithm._
+
 class Greedy extends Algorithm {
 
     override protected def perform(project: ProjectFile, byTime: Boolean = false) = {
-        val cleanProject = Algorithm fix (ProjectCloner createBaseProject (project, false))
+        val cleanProject = Algorithm packTasksAndFixResourcesConflicts (cloneProject (project))
         cleanProject.getAllTasks.foldLeft(cleanProject)((globalBestProject, task) => {
             Printer projectCostAndDuration (globalBestProject)
             assignBestResourceForTask(task) inProject (globalBestProject, byTime)
@@ -30,10 +31,10 @@ class Greedy extends Algorithm {
     }
 
     private def operateOnCopy(globalBestProject: ProjectFile, task: Task, resource: Resource) = {
-        val localTempProject = ProjectCloner createBaseProject (globalBestProject, true)
+        val localTempProject = cloneProject (globalBestProject, true)
         val localTempTask = localTempProject getTaskByID (task getID)
         val localTempResource = localTempProject getResourceByID (resource getID)
         assignResource (localTempResource) toTask (localTempTask)
-        Algorithm fix (localTempProject)
+        Algorithm packTasksAndFixResourcesConflicts (localTempProject)
     }
 }
