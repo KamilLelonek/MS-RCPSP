@@ -24,7 +24,7 @@ class Greedy extends Algorithm {
             val resourcesCapablePerformingTask = SkillsUtilities resourcesCapablePerformingTask (task)
             resourcesCapablePerformingTask.foldLeft(null: ProjectFile)((localBestProject, resource) => {
                 val localTempProject = operateOnCopy(globalBestProject, task, resource)
-                chooseBetterProject(localBestProject, localTempProject, byTime)
+                chooseBetterProject(localBestProject, localTempProject)(byTime)
             })
         }
     }

@@ -53,7 +53,7 @@ abstract class Algorithm {
         }
     }
 
-    protected def chooseBetterProject(localBestProject: ProjectFile, localTempProject: ProjectFile, byTime: Boolean): ProjectFile =
+    protected def chooseBetterProject(localBestProject: ProjectFile, localTempProject: ProjectFile)(implicit byTime: Boolean): ProjectFile =
         if (localBestProject == null) localTempProject
         else
             calculateBetterProject(localBestProject, localTempProject) byEval (if (byTime) Eval getProjectDuration else Eval getProjectCost)

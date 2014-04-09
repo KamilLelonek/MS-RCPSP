@@ -30,17 +30,17 @@ class BranchAndBound extends Algorithm {
     private def buildTreeWithProject(project: ProjectFile) = new {
         def forGroups(groups: BranchAndBound.Groups) = new {
             def byTime(byTime: Boolean): ProjectFile =
-                buildPartialScheduler(project, 0, groups, byTime)
+                buildPartialScheduler(project, 0, groups)(byTime)
         }
     }
 
-    private def buildPartialScheduler(currentSolution: ProjectFile, currentDepth: Int, groups: BranchAndBound.Groups, byTime: Boolean): ProjectFile = {
+    private def buildPartialScheduler(currentSolution: ProjectFile, currentDepth: Int, groups: BranchAndBound.Groups)(implicit byTime: Boolean): ProjectFile = {
         Printer projectCostAndDuration (currentSolution)
         val tasksIdsToPermute = groups(currentDepth)._2 toList
         val tasksWithResources = getAllTasksResources (tasksIdsToPermute) inProject currentSolution
         val permutedTasks = permutateTasks (tasksWithResources)
-        val newSolution = chooseBestSolution(currentSolution, permutedTasks, byTime)
-        if (currentDepth < groups.size - 1) buildPartialScheduler(newSolution, currentDepth + 1, groups, byTime) else newSolution
+        val newSolution = chooseBestSolution(currentSolution, permutedTasks)
+        if (currentDepth < groups.size - 1) buildPartialScheduler(newSolution, currentDepth + 1, groups) else newSolution
     }
 
     def permutateTasks(tasksWithResources: List[(Integer, List[Integer])], currentSolution: List[(Integer, Integer)] = Nil): List[List[(Integer, Integer)]] =
@@ -57,7 +57,7 @@ class BranchAndBound extends Algorithm {
     private def getTaskWithResources(task: Task) =
         (task getID, SkillsUtilities.resourcesCapablePerformingTask(task).map(_ getID) toList)
 
-    private def chooseBestSolution(currentSolution: ProjectFile, possibleSolutions: List[List[(Integer, Integer)]], byTime: Boolean) = {
+    private def chooseBestSolution(currentSolution: ProjectFile, possibleSolutions: List[List[(Integer, Integer)]])(implicit byTime: Boolean) = {
         var localBestProject: ProjectFile = null
         possibleSolutions foreach (solution => {
             val localTempProject = cloneProject (currentSolution, true)
@@ -66,7 +66,7 @@ class BranchAndBound extends Algorithm {
                 val localTempResource = localTempProject getResourceByID (taskWithResource _2)
                 assignResource (localTempResource) toTask localTempTask
                 if (byTime) packTasksAndFixResourcesConflicts (localTempProject)
-                localBestProject = chooseBetterProject(localBestProject, localTempProject, byTime)
+                localBestProject = chooseBetterProject(localBestProject, localTempProject)
             })
         })
         localBestProject
