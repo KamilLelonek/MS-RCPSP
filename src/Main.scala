@@ -14,7 +14,7 @@ object Main extends App {
 
     def performAllAlgorithmsForFiles(projects: Array[(File, ProjectFile)] = IO allProjects) = {
         projects.foreach(project => {
-            Printer projectName (project)
+            Printer projectName project
             performAllAlgorithmsForFile (project)
         })
         Printer flush
@@ -24,7 +24,7 @@ object Main extends App {
         val methods = Array(time, cost)
         val algorithms = Array(new Greedy, new BranchAndBound)
         for (algorithm <- algorithms; method <- methods) {
-            Printer time (performAlgorithm(algorithm) forProject (project._2) withMethod (method) forFile (project._1))
+            Printer time (performAlgorithm(algorithm) forProject (project _2) withMethod method forFile (project _1))
         }
     }
 
@@ -32,10 +32,10 @@ object Main extends App {
         def forProject(project: ProjectFile) = new {
             def withMethod(method: OptimizationMethod) = new {
                 def forFile(file: File) = {
-                    Printer algorithmHeader (algorithm) andMethodHeader (method)
-                    val result = algorithm.optimize(project) by (method)
-                    Printer projectCostAndDuration (result)
-                    IO writeProject (result) fromAlgorithm (algorithm) andMethod (method) forFile (file)
+                    Printer algorithmHeader algorithm andMethodHeader method
+                    val result = algorithm optimize project by method
+                    Printer projectCostAndDuration result
+                    IO writeProject result fromAlgorithm algorithm andMethod method forFile file
                 }
             }
         }

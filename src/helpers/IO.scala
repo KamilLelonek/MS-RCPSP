@@ -19,7 +19,7 @@ object IO {
     def allProjects = mapFilesOnProjects(allFiles)
     private def mapFilesOnProjects(files: Array[File]) = files map (projectPath => (projectPath, readProject(projectPath getPath)))
 
-    private def readProject(sourcePath: String) = reader read (sourcePath)
+    private def readProject(sourcePath: String) = reader read sourcePath
 
     def writeProject(project: ProjectFile) = new {
         def fromAlgorithm(algorithm: Algorithm) = new {

@@ -14,16 +14,16 @@ case object cost extends OptimizationMethod
 
 object Algorithm {
     def packTasksAndFixResourcesConflicts(project: ProjectFile) = {
-        ConflictFixer pack (project)
-        ConflictFixer fixConflicts (project)
+        ConflictFixer pack project
+        ConflictFixer fixConflicts project
         project
     }
 
     def rescheduleTasksByStartDate(project: ProjectFile) = {
-        val clonedProject = cloneProject(project)
+        val clonedProject = cloneProject (project)
         clonedProject.getAllResourceAssignments.clear
-        ConflictFixer pack (clonedProject)
-        CriticalPathFixer rescheduleProject (clonedProject)
+        ConflictFixer pack clonedProject
+        CriticalPathFixer rescheduleProject clonedProject
         clonedProject
     }
 
@@ -35,8 +35,8 @@ abstract class Algorithm {
     def optimize(project: ProjectFile) = new {
         def by(optimizationMethod: OptimizationMethod): ProjectFile = {
             optimizationMethod match {
-                case `time` => perform(project, true)
-                case `cost` => perform(project)
+                case `time` => perform (project, true)
+                case `cost` => perform (project)
             }
         }
     }
@@ -45,7 +45,7 @@ abstract class Algorithm {
 
     protected def assignResource(resource: Resource) = new {
         def toTask(task: Task) = {
-            val resourceAssignment = task addResourceAssignment (resource)
+            val resourceAssignment = task addResourceAssignment resource
             resourceAssignment setStart (task getStart)
             resourceAssignment setWork (task getDuration)
             resourceAssignment setRemainingWork (resourceAssignment getWork)

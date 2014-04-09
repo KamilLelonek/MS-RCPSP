@@ -15,24 +15,24 @@ object Printer {
     private lazy val stringBuilder = new StringBuilder
 
     def projectCostAndDuration(project: ProjectFile) =
-        log(s"\t\tProject cost: ${Eval.getProjectCost(project)} and duration: ${Eval.getProjectDuration(project)}")
+        log(s"\t\tProject cost: ${Eval getProjectCost project} and duration: ${Eval getProjectDuration project}")
 
     def algorithmHeader(algorithm: Algorithm) = new {
-        log(s"\n### ${IO simpleClassName (algorithm)} algorithm ###")
+        log(s"\n### ${IO simpleClassName algorithm} algorithm ###")
         def andMethodHeader(optimizationMethod: OptimizationMethod) =
-            log(s"\t-------- ${IO simpleClassName (optimizationMethod)} optimization --------")
+            log(s"\t-------- ${IO simpleClassName optimizationMethod} optimization --------")
     }
 
     def groupedTasks(groups: BranchAndBound.Groups) = {
-        log(s"\nGroups count: ${groups.size}")
+        log(s"\nGroups count: ${groups size}")
         groups.zipWithIndex foreach {
             case (group, index) =>
-                log(s"Node ${index}: ${dateFormat.format(group._1)} with tasks: ${group._2}")
+                log(s"Node ${index}: ${dateFormat format (group _1)} with tasks: ${group _2}")
         }
     }
 
     def projectName(project: (File, ProjectFile)) =
-        log(s"\n================> Reading ${project._1} <================")
+        log(s"\n================> Reading ${project _1} <================")
 
     def time(function: => Unit) = {
         val startTime = System.currentTimeMillis
@@ -48,7 +48,7 @@ object Printer {
 
     def flush = {
         val printWriter = new PrintWriter(new File("results/log.txt"))
-        printWriter write (stringBuilder.toString)
+        printWriter write (stringBuilder toString)
         printWriter close
     }
 }
