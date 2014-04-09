@@ -11,9 +11,11 @@ import core.SkillsUtilities
 import helpers.Printer
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.Task
+import BranchAndBound._
 
 object BranchAndBound {
     type Groups = List[(Date, List[Integer])]
+    type ListOfTuples = List[(Integer, Integer)]
 }
 
 class BranchAndBound extends Algorithm {
@@ -28,13 +30,13 @@ class BranchAndBound extends Algorithm {
         tasks.groupBy(_ getStart).toList.sortBy(_ _1) map (tuple => (tuple _1, tuple._2.toList map (task => task getID)))
 
     private def buildTreeWithProject(project: ProjectFile) = new {
-        def forGroups(groups: BranchAndBound.Groups) = new {
+        def forGroups(groups: Groups) = new {
             def byTime(byTime: Boolean): ProjectFile =
                 buildPartialScheduler(project, 0, groups)(byTime)
         }
     }
 
-    private def buildPartialScheduler(currentSolution: ProjectFile, currentDepth: Int, groups: BranchAndBound.Groups)(implicit byTime: Boolean): ProjectFile = {
+    private def buildPartialScheduler(currentSolution: ProjectFile, currentDepth: Int, groups: Groups)(implicit byTime: Boolean): ProjectFile = {
         Printer projectCostAndDuration (currentSolution)
         val tasksIdsToPermute = groups(currentDepth)._2 toList
         val tasksWithResources = getAllTasksResources (tasksIdsToPermute) inProject currentSolution
@@ -43,10 +45,10 @@ class BranchAndBound extends Algorithm {
         if (currentDepth < groups.size - 1) buildPartialScheduler(newSolution, currentDepth + 1, groups) else newSolution
     }
 
-    def permutateTasks(tasksWithResources: List[(Integer, List[Integer])], currentSolution: List[(Integer, Integer)] = Nil): List[List[(Integer, Integer)]] =
+    def permutateTasks(tasksWithResources: List[(Integer, List[Integer])], currentSolution: ListOfTuples = Nil): List[ListOfTuples] =
         tasksWithResources match {
-            case head :: Nil  => head._2.map (x => ((head _1, x) :: currentSolution).reverse)
-            case head :: tail => head._2.flatMap(x => permutateTasks(tail, (head _1, x) :: currentSolution))
+            case head :: Nil  => head._2 map (x => ((head _1, x) :: currentSolution) reverse)
+            case head :: tail => head._2 flatMap (x => permutateTasks(tail, (head _1, x) :: currentSolution))
         }
 
     def getAllTasksResources(tasksIDs: List[Integer]) = new {
@@ -57,7 +59,7 @@ class BranchAndBound extends Algorithm {
     private def getTaskWithResources(task: Task) =
         (task getID, SkillsUtilities.resourcesCapablePerformingTask(task).map(_ getID) toList)
 
-    private def chooseBestSolution(currentSolution: ProjectFile, possibleSolutions: List[List[(Integer, Integer)]])(implicit byTime: Boolean) = {
+    private def chooseBestSolution(currentSolution: ProjectFile, possibleSolutions: List[ListOfTuples])(implicit byTime: Boolean) = {
         var localBestProject: ProjectFile = null
         possibleSolutions foreach (solution => {
             val localTempProject = cloneProject (currentSolution, true)
