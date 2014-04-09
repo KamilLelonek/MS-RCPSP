@@ -25,7 +25,7 @@ class BranchAndBound extends Algorithm {
     }
 
     private def groupAndSortTasksByStartDate(tasks: java.util.List[Task]) =
-        tasks.groupBy(_ getStart).toList.sortBy(_ _1) map ((tuple) => (tuple _1, tuple._2.toList map (task => task getID)))
+        tasks.groupBy(_ getStart).toList.sortBy(_ _1) map (tuple => (tuple _1, tuple._2.toList map (task => task getID)))
 
     private def buildTreeWithProject(project: ProjectFile) = new {
         def forGroups(groups: BranchAndBound.Groups) = new {
