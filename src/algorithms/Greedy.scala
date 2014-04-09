@@ -2,13 +2,12 @@ package algorithms
 
 import scala.collection.JavaConversions.asScalaBuffer
 
+import Algorithm.cloneProject
 import core.SkillsUtilities
 import helpers.Printer
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.Resource
 import net.sf.mpxj.Task
-
-import Algorithm._
 
 class Greedy extends Algorithm {
 

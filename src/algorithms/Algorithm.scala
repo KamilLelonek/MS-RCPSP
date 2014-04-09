@@ -1,12 +1,12 @@
 package algorithms
 
+import core.ProjectCloner
 import core.conflicts.ConflictFixer
+import core.criticalpath.CriticalPathFixer
 import core.eval.Eval
 import net.sf.mpxj.ProjectFile
 import net.sf.mpxj.Resource
 import net.sf.mpxj.Task
-import core.ProjectCloner
-import core.criticalpath.CriticalPathFixer
 
 sealed abstract class OptimizationMethod
 case object time extends OptimizationMethod
@@ -59,6 +59,6 @@ abstract class Algorithm {
             calculateBetterProject(localBestProject, localTempProject) byEval (if (byTime) Eval getProjectDuration else Eval getProjectCost)
 
     private def calculateBetterProject(firstProject: ProjectFile, lastProject: ProjectFile) = new {
-        def byEval(eval: ProjectFile => Double) = List(firstProject, lastProject) minBy (eval(_))
+        def byEval(eval: ProjectFile => Double) = List(firstProject, lastProject) minBy eval
     }
 }
